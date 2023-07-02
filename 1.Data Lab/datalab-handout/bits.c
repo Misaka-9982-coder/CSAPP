@@ -266,7 +266,31 @@ int logicalNeg(int x) {
  *  Rating: 4
  */
 int howManyBits(int x) {
-  return 0;
+  int sign, bit16, bit8, bit4, bit2, bit1, bit0;
+  
+  // 如果 x 是负数，将其转换为正数
+  sign = x >> 31;
+  x = (sign & ~x) | (~sign & x);
+
+  // 二分查找最高位的位置
+  bit16 = !!(x >> 16) << 4; // 如果高16位有1，则bit16=16，否则bit16=0
+  x = x >> bit16; // 如果有1，则右移16位
+
+  bit8 = !!(x >> 8) << 3; // 接着检查剩下的位数
+  x = x >> bit8; // 如果有1，则右移8位
+
+  bit4 = !!(x >> 4) << 2;
+  x = x >> bit4;
+
+  bit2 = !!(x >> 2) << 1;
+  x = x >> bit2;
+
+  bit1 = !!(x >> 1);
+  x = x >> bit1;
+
+  bit0 = x;
+
+  return bit16 + bit8 + bit4 + bit2 + bit1 + bit0 + 1; // +1是因为我们从0开始计数的
 }
 //float
 /* 
