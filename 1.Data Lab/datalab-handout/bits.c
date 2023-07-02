@@ -201,7 +201,13 @@ int negate(int x) {
  *   Rating: 3
  */
 int isAsciiDigit(int x) {
-  return 2;
+  int sign_bit = 1 << 31;
+  int lower_bound = 0x30;
+  int upper_bound = 0x39;
+
+  int upper_than_30 = !(sign_bit & (x + ~lower_bound + 1));
+  int lower_than_39 = !(sign_bit & (upper_bound + ~x + 1));
+  return upper_than_30 & lower_than_39;
 }
 /* 
  * conditional - same as x ? y : z 
