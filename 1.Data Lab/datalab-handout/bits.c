@@ -332,8 +332,34 @@ unsigned floatScale2(unsigned uf) {
  *   Max ops: 30
  *   Rating: 4
  */
-int floatFloat2Int(unsigned uf) {
-  return 2;
+  int floatFloat2Int(unsigned uf) {
+  unsigned sign = uf & 0x80000000;
+  int exp = (uf & 0x7F800000) >> 23;
+  unsigned frac = uf & 0x007FFFFF;
+
+  // 对exp进行偏移修正
+  exp -= 127;
+
+  // 如果exp小于0，返回0
+  if (exp < 0) return 0;
+
+  // 如果exp大于31，或者uf是NaN或无穷大，返回0x80000000u
+  if (exp > 31) return 0x80000000u;
+
+  // 为尾数添加隐含的1
+  frac |= 0x00800000;
+
+  // 如果exp大于23，需要左移；如果小于23，需要右移
+  if (exp > 23) {
+    frac <<= (exp - 23);
+  } else {
+    frac >>= (23 - exp);
+  }
+
+  // 如果sign为1，需要取反
+  if (sign) return ~frac + 1;
+
+  return frac;
 }
 /* 
  * floatPower2 - Return bit-level equivalent of the expression 2.0^x
