@@ -305,7 +305,20 @@ int howManyBits(int x) {
  *   Rating: 4
  */
 unsigned floatScale2(unsigned uf) {
-  return 2;
+  unsigned sign = uf & 0x80000000;
+  unsigned exp = uf & 0x7F800000;
+  unsigned frac = uf & 0x007FFFFF;
+  
+  // 如果uf是NaN或无穷大，直接返回uf
+  if (exp == 0x7F800000) return uf;
+  
+  // 如果uf是非规格化数或零，左移一位即可
+  if (exp == 0) return sign | (uf << 1);
+
+  // 正常情况下，指数加1
+  exp += 0x00800000;
+
+  return sign | exp | frac;
 }
 /* 
  * floatFloat2Int - Return bit-level equivalent of expression (int) f
