@@ -375,5 +375,15 @@ unsigned floatScale2(unsigned uf) {
  *   Rating: 4
  */
 unsigned floatPower2(int x) {
-    return 2;
+  // 如果x大于127，返回+INF
+  if (x > 127) return 0x7F800000;
+
+  // 如果x小于-126，返回0
+  if (x < -126) return 0;
+
+  // 把x转换为浮点数的指数表示
+  x += 127;
+
+  // 将结果存储在指数部分，尾数部分为0
+  return x << 23;
 }
